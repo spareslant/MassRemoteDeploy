@@ -6,7 +6,7 @@ This is also a similar kind of tool. All it need is a screen utility to be insta
 
 With this tool , process for a mass deployment would be like:
 
-  1) A command to Initiate multiple connections to target hosts. ( I have tested 25 simultaneous connections without any issues)
+  1) A command to Initiate multiple connections to target hosts. ( I have tested 40 simultaneous connections without any issues)
   
   2) A command to supply user password that will log him/her into above multiple connections.
   
