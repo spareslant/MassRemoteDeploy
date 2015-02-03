@@ -25,14 +25,13 @@ Unzip all files in your home folder in some central machine.
 ```bash
 cd SCREEN_TEST
 ```
-create a direcotry inside RELEASES directory and name it whatever you like. lets say e.g.  TEST
-additionally create a script or program that you want to run on all target machines inside RELESES/TEST dir.(This step is not
-mandatory)
-run following command and following the instructions on screen.
+* Create a direcotry inside RELEASES directory and name it whatever you like. lets say e.g.  TEST
+* Additionally create a script or program that you want to run on all target machines inside RELESES/TEST dir.(This step is not mandatory)
+* Run following command and following the instructions on screen.
 ```bash
 ./generate_screenrc_files_and_push_required_files.sh TEST
 ```
-Additonally just run `./generate_screenrc_files_and_push_required_files.sh <enter> `to view one more option
+Additonally just run `./generate_screenrc_files_and_push_required_files.sh <enter> `to view  more option
 
 
 
