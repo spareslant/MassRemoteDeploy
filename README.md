@@ -5,7 +5,7 @@ Often Sys Admins have to do similar kind of tasks on a number of machines. Each 
 This is also a similar kind of tool. It exploits the power of **screen**.  What it requires to run.
 
 * A central host having bash
-* Same above central host having "screen" utility to be installed.
+* Same above central host having "screen" utility installed.
 
 You do not even need your or root ssh keys in place. You will provide your password in `passwd_file` (see sample file in code). 
 
