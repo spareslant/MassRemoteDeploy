@@ -4,9 +4,5 @@ defutf8 on
 hardstatus on
 hardstatus alwayslastline
 hardstatus string "%{+b r} %t"
-source SCREEN_RC_FILES/slphv2tg1c1tm02_rc
-source SCREEN_RC_FILES/slphv2tg1c2tm02_rc
-source SCREEN_RC_FILES/slphv2tg1c3tm02_rc
-source SCREEN_RC_FILES/slphv2tg1c4tm02_rc
-source SCREEN_RC_FILES/slphv2tg1c5tm02_rc
-source SCREEN_RC_FILES/slphv2tg1c6tm02_rc
+source SCREEN_RC_FILES/hostname1_rc
+source SCREEN_RC_FILES/hostname2_rc
