@@ -168,7 +168,7 @@ echo "# On 3rd Terminal : You can also run script/program that might have been c
 echo "screen -S MasterSession -X at \"#\" stuff \$'cd /tmp/$RELEASE ; bash ./<yourscripthere.sh>\n'"
 echo ""
 echo "# On 3rd Terminal : To restart pipelines in random time order"
-echo "screen -S MasterSession -X at \"#\" stuff \"sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/gridpipeline stop;sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/gridpipeline start^M\""
+echo "screen -S MasterSession -X at \"#\" stuff \"sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/someservice stop;sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/gridpipeline start^M\""
 echo ""
 echo "# On 3rd Terminal : To monitor all sessions in a cycle repeatedly, run following and then switchover to 2nd terminal window to monitor it"
 echo "while true; do screen -S MasterSession -X next; sleep 5s; done"
