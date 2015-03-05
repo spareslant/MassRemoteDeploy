@@ -1,6 +1,5 @@
 #! /bin/bash
 
-# author: spare.slant@gmail.com
 
 HOST_SCREEN_RC_FILES_DIR="SCREEN_RC_FILES"
 MAIN_RC_FILE="mainscreenrc"
