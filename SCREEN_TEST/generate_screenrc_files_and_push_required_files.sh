@@ -4,8 +4,8 @@
 HOST_SCREEN_RC_FILES_DIR="SCREEN_RC_FILES"
 MAIN_RC_FILE="mainscreenrc"
 LOG_DIR="LOGS"
-SCREEN_HOMEDIR="SCREEN_TEST"
-USAGE="usage is: $(basename $0) <RELEASE NO>\ne.g. $(basename $0) 2.6.7.27 
+SCREEN_HOMEDIR="REMOTE_DEPLOY"
+USAGE="usage is: $(basename $0) <RELEASE NO>\ne.g. $(basename $0) <Task DIR> 
 or
 $(basename $0) SSHKEYCOPY"
 SCP_COMMAND="/usr/bin/scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -o PreferredAuthentications=hostbased,publickey,password"
@@ -141,7 +141,7 @@ done
 
 echo "=========================================="
 echo "# Open 2nd Terminal Window : Run following to start Screen sessions with multiple windows:"
-echo "cd $HOME/SCREEN_TEST ; screen -S MasterSession -c $MAIN_RC_FILE"
+echo "cd $HOME/$SCREEN_HOMEDIR ; screen -S MasterSession -c $MAIN_RC_FILE"
 echo ""
 echo "# On 2nd Terminal Window: Run following command:"
 echo "screen -r  <Now Press ctrl-a,ctrl-\" to check all connections>"
