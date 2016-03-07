@@ -5,7 +5,7 @@ HOST_SCREEN_RC_FILES_DIR="SCREEN_RC_FILES"
 MAIN_RC_FILE="mainscreenrc"
 LOG_DIR="LOGS"
 SCREEN_HOMEDIR="REMOTE_DEPLOY"
-USAGE="usage is: $(basename $0) <RELEASE NO>\ne.g. $(basename $0) <Task DIR> 
+USAGE="usage is: $(basename $0) <Task DIRECTORY>\ne.g. $(basename $0) INSTALL_APPS
 or
 $(basename $0) SSHKEYCOPY"
 SCP_COMMAND="/usr/bin/scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -o PreferredAuthentications=hostbased,publickey,password"
