@@ -4,32 +4,39 @@
 HOST_SCREEN_RC_FILES_DIR="SCREEN_RC_FILES"
 MAIN_RC_FILE="mainscreenrc"
 LOG_DIR="LOGS"
-SCREEN_HOMEDIR="REMOTE_RELEASES"
+TOOL_HOMEDIR=$(pwd)
+TASKS_DIR="REMOTE_TASKS"
 USAGE="usage is: $(basename $0) <Task DIRECTORY>\ne.g. $(basename $0) INSTALL_APPS
 or
-$(basename $0) SSHKEYCOPY"
+$(basename $0) SSHKEYCOPY
+
+Note:
+1. Create a file \"boxes\" and append hostnames in it one per line. Lines starting with # will be ignored.
+2. Create a directory inside $TASKS_DIR that would optionally contain script/files to be executed/places on remote machines. e.g. $TASKS_DIR/INSTALL_APPS
+3. Above created directory name will be the argument to this script.
+
+e.g. $(basename $0) INSTALL_APPS"
 SCP_COMMAND="/usr/bin/scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -o PreferredAuthentications=hostbased,publickey,password"
 
 
 mkdir -p $HOST_SCREEN_RC_FILES_DIR
 mkdir -p $LOG_DIR
-mkdir -p RELEASES
+mkdir -p $TASKS_DIR
+TASK="$1"
 
-RELEASE="$1"
-
-if [[ "$RELEASE" == "SSHKEYCOPY" ]]
+if [[ "$TASK" == "SSHKEYCOPY" ]]
 then
-    mkdir -p RELEASES/SSHKEYCOPY
+    mkdir -p $TASKS_DIR/SSHKEYCOPY
 fi
 
 
 LOGGED_SESSION_SCREENRC_FILE="logged_in_screen_config"
 
-[[ -z "$RELEASE" ]] && printf "$USAGE\n Exiting.." && exit 2
+[[ -z "$TASK" ]] && printf "$USAGE\n Exiting..\n" && exit 2
 
-if [[ ! -d RELEASES/$RELEASE ]]
+if [[ ! -d $TASKS_DIR/$TASK ]]
 then
-        echo "RELEASES/$RELEASE does not exist. Exiting.."
+        echo "$TASKS_DIR/$TASK does not exist. Exiting.."
         exit 1
 fi
 
@@ -55,14 +62,14 @@ MAINSCREENRC
 echo "----- Generating screenrc file used in logged in session -----"
 
 (cat <<-SESSIONRCFILE
-logfile /tmp/$RELEASE/screen.raw.log
+logfile /tmp/$TASK/screen.raw.log
 deflog on
 SESSIONRCFILE
-) > RELEASES/$RELEASE/$LOGGED_SESSION_SCREENRC_FILE
+) > $TASKS_DIR/$TASK/$LOGGED_SESSION_SCREENRC_FILE
 
 
 
-if [[ $RELEASE == "SSHKEYCOPY" ]]
+if [[ $TASK == "SSHKEYCOPY" ]]
 then
 for host in `egrep -v '^#|^$' boxes`
 do
@@ -75,15 +82,15 @@ do
     else
         echo -e "\e[41mFAIL: $host does not have ssh keys.\e[0m"
     fi
-    mkdir -p RELEASES/$RELEASE/${host}_export
-    echo "export TARGETHOST=$host" > RELEASES/$RELEASE/${host}_export/${host}_export
+    mkdir -p $TASKS_DIR/$TASK/${host}_export
+    echo "export TARGETHOST=$host" > $TASKS_DIR/$TASK/${host}_export/${host}_export
 echo "------ Generating screenrc file for $host -----"
 (cat <<-SCREENSTART
-screen -t $host 
+screen -t $host
 select $host
 logfile LOGS/$host.log.raw
 log on
-stuff "source $HOME/SCREEN_TEST/RELEASES/$RELEASE/${host}_export/${host}_export"`echo -ne '\015'`
+stuff "source $TOOL_HOMEDIR/$TASKS_DIR/$TASK/${host}_export/${host}_export"`echo -ne '\015'`
 detach
 SCREENSTART
  ) > $HOST_SCREEN_RC_FILES_DIR/${host}_rc
@@ -93,20 +100,20 @@ done
     echo "# Make sure boxes file is populated with target hostnames"
     echo ""
     echo "# Run following command in a terminal"
-    echo "./$(basename $0) $RELEASE"
+    echo "./$(basename $0) $TASK"
     echo ""
     echo "# Open 2nd Terminal Window : Run following to start Screen sessions with multiple windows:"
-    echo "cd $HOME/$SCREEN_HOMEDIR ; screen -S MasterSession -c $MAIN_RC_FILE"
+    echo "cd $TOOL_HOMEDIR ; screen -S MasterSession -c $MAIN_RC_FILE"
     echo ""
     echo "# On 2nd Terminal Window: Run following command:"
     echo "screen -r  <Now Press ctrl-a,ctrl-\" to check all connections>"
     echo ""
     echo "# Open 3rd Terminal window : Grab the contents of file (your password in this file appended by ctrl-v,ctrl-Enter ie. ^M character appended after your password):"
-    echo "cd $HOME/$SCREEN_HOMEDIR ; screen -S MasterSession -X readbuf ./passwd_file"
+    echo "cd $TOOL_HOMEDIR ; screen -S MasterSession -X readbuf ./passwd_file"
     echo ""
     echo "# Open 3rd Terminal window : run command to copy ssh keys"
-    echo "screen -S MasterSession -X at \"#\" stuff \$'ssh-keyscan -t rsa \$TARGETHOST >> \$HOME/.ssh/known_hosts ; ssh-copy-id -i \$HOME/.ssh/id_rsa.pub \$TARGETHOST\n'  (Preferred command)"
-    echo "screen -S MasterSession -X at \"#\" stuff \$'cat \$HOME/.ssh/*.pub | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \$TARGETHOST  \"cat - > \$HOME/.ssh/authorized_keys\"\n'"
+    echo "screen -S MasterSession -X at \"#\" stuff \$'ssh-keyscan -t rsa \\\$TARGETHOST >> \$HOME/.ssh/known_hosts ; ssh-copy-id -i \$HOME/.ssh/id_rsa.pub \\\$TARGETHOST\n'  (Preferred command)"
+    echo "screen -S MasterSession -X at \"#\" stuff \$'cat \$HOME/.ssh/*.pub | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \\\$TARGETHOST  \"cat - > \$HOME/.ssh/authorized_keys\"\n'"
     echo ""
     echo "# On 3rd Terminal Window : paste your password"
     echo "screen -S MasterSession -X at \"#\" paste \".\""
@@ -117,7 +124,7 @@ for host in `egrep -v '^#|^$' boxes`
 do
 echo "------ Generating screenrc file for $host -----"
 (cat <<-SCREENSTART
-screen -t $host ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $host 
+screen -t $host ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $host
 select $host
 logfile LOGS/$host.log.raw
 log on
@@ -129,9 +136,9 @@ done
 
 for host in `egrep -v '^#|^$' boxes`
 do
-        echo "=====pushing {{ $RELEASE }} files to $host====="
+        echo "=====pushing {{ $TASK }} files to $host====="
 
-        $SCP_COMMAND -pr RELEASES/$RELEASE $host:/tmp
+        $SCP_COMMAND -pr $TASKS_DIR/$TASK $host:/tmp
         if [[ $? -ne 0 ]]
         then
             echo -e "\e[41mERROR: Files not copied for $host.\e[0m"
@@ -141,18 +148,18 @@ done
 
 echo "=========================================="
 echo "# Open 2nd Terminal Window : Run following to start Screen sessions with multiple windows:"
-echo "cd $HOME/$SCREEN_HOMEDIR ; screen -S MasterSession -c $MAIN_RC_FILE"
+echo "cd $TOOL_HOMEDIR ; screen -S MasterSession -c $MAIN_RC_FILE"
 echo ""
 echo "# On 2nd Terminal Window: Run following command:"
 echo "screen -r  <Now Press ctrl-a,ctrl-\" to check all connections>"
 echo ""
 echo "# Open 3rd Terminal window : Grab the contents of file (your password in this file appended by ctrl-v,ctrl-Enter ie. ^M character appended after your password):"
-echo "cd $HOME/$SCREEN_HOMEDIR ; screen -S MasterSession -X readbuf ./passwd_file"
+echo "cd $TOOL_HOMEDIR ; screen -S MasterSession -X readbuf ./passwd_file"
 echo ""
 echo "# On 3rd Terminal : Send contents from user input directly:"
 #echo "screen -S MasterSession -X at \"#\" stuff \"sudo su -^M\" (Press ctrl-v ctrl-Enter for ^M)"
 echo "screen -S MasterSession -X at \"#\" stuff \$'sudo su -\n'"
-#echo "screen -S MasterSession -X at \"#\" stuff \"sudo su -\"\`echo -ne '\015'" 
+#echo "screen -S MasterSession -X at \"#\" stuff \"sudo su -\"\`echo -ne '\015'"
 echo ""
 echo "# On 3rd Terminal : Send Grabbed contents to all Windows in MasterSession screen session:"
 echo "screen -S MasterSession -X at \"#\" paste \".\""
@@ -160,11 +167,11 @@ echo "# On 3rd Terminal : Send Grabbed contents to a particular window:"
 echo "screen -S MasterSession -p machine1 -X paste \".\""
 echo ""
 echo "# On 3rd Terminal : IF REQUIRED run screen session in logged in session as well"
-echo "screen -S MasterSession -X at \"#\" stuff \$'screen -S R$RELEASE -c /tmp/$RELEASE/$LOGGED_SESSION_SCREENRC_FILE\n'"
+echo "screen -S MasterSession -X at \"#\" stuff \$'screen -S R$TASK -c /tmp/$TASK/$LOGGED_SESSION_SCREENRC_FILE\n'"
 echo ""
 echo "# On 3rd Terminal : Now you can run commands as root user using screen's stuff command as described above"
-echo "# On 3rd Terminal : You can also run script/program that might have been copied in /tmp/$RELEASE directory using stuff command"
-echo "screen -S MasterSession -X at \"#\" stuff \$'cd /tmp/$RELEASE ; bash ./<yourscripthere.sh>\n'"
+echo "# On 3rd Terminal : You can also run script/program that might have been copied in /tmp/$TASK directory using stuff command"
+echo "screen -S MasterSession -X at \"#\" stuff \$'cd /tmp/$TASK ; bash ./<yourscripthere.sh>\n'"
 echo ""
 echo "# On 3rd Terminal : To restart pipelines in random time order"
 echo "screen -S MasterSession -X at \"#\" stuff \"sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/someservice stop;sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/gridpipeline start^M\""
