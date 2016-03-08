@@ -173,7 +173,7 @@ echo "# On 3rd Terminal : Now you can run commands as root user using screen's s
 echo "# On 3rd Terminal : You can also run script/program that might have been copied in /tmp/$TASK directory using stuff command"
 echo "screen -S MasterSession -X at \"#\" stuff \$'cd /tmp/$TASK ; bash ./<yourscripthere.sh>\n'"
 echo ""
-echo "# On 3rd Terminal : To restart pipelines in random time order"
+echo "# On 3rd Terminal : To restart services in random time order"
 echo "screen -S MasterSession -X at \"#\" stuff \"sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/someservice stop;sleep \\\$(perl -e 'printf \"%d\n\",rand() * 10');/etc/init.d/gridpipeline start^M\""
 echo ""
 echo "# On 3rd Terminal : To monitor all sessions in a cycle repeatedly, run following and then switchover to 2nd terminal window to monitor it"
