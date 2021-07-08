@@ -7,7 +7,7 @@ This is also a similar kind of tool. It exploits the power of **screen**.  What 
 * A central host having bash
 * Same above central host having "screen" utility installed.
 
-You do not even need your or root ssh keys in place. You will provide your password in `passwd_file` (see sample file in code). 
+You do not even need your login account or root ssh keys in place. You will provide your password in `passwd_file` (see sample file in code). 
 
 What it can provide:
 * logging on every host + on central host
